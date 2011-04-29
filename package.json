@@ -1,0 +1,33 @@
+{ "name"       : "StringScanner"
+, "description": "StringScanner performs lexical scanning operations on a string."
+, "author"     : "Michael Ficarra"
+, "version"    : "0.0.2"
+, "homepage"   : "http://github.com/michaelficarra/cjs-string-scanner"
+, "main"       : "./lib/StringScanner"
+, "directories":
+  { "lib" : "./lib"
+  }
+, "repository":
+  { "type": "git"
+  , "url" : "git://github.com/michaelficarra/cjs-string-scanner.git"
+  }
+, "licenses": [
+    { "type": "MIT",
+    , "url" : "http://github.com/michaelficarra/cjs-string-scanner/raw/master/LICENSE"
+    }
+  ]
+, "engines": { "node": ">=0.2.5" }
+, "keywords":
+  [ "StringScanner"
+  , "string"
+  , "scanner"
+  , "ruby"
+  , "lex"
+  , "lexer"
+  , "lexical"
+  , "analysis"
+  , "token"
+  , "tokenize"
+  , "tokenizer"
+  ]
+}
