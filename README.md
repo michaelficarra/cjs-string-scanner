@@ -10,7 +10,7 @@ How To Use
 
 Instantiate a new `StringScanner` by passing its constructor the string to scan.
 
-	var StringScanner = require("stringscanner");
+	var StringScanner = require("StringScanner");
 	var ss = new StringScanner("abc123 def456");
 	// #<StringScanner 0/13 @ "abc12...">
 
