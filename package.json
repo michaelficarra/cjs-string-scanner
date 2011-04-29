@@ -12,7 +12,7 @@
   , "url" : "git://github.com/michaelficarra/cjs-string-scanner.git"
   }
 , "licenses": [
-    { "type": "MIT",
+    { "type": "MIT"
     , "url" : "http://github.com/michaelficarra/cjs-string-scanner/raw/master/LICENSE"
     }
   ]
