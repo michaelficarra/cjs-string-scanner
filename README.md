@@ -80,7 +80,7 @@ Appends the given string to the string being scanned.
 	ss.concat(" ghi789")		// #<StringScanner 0/20 @ "abc12..."
 	ss.checkUntil(/h/)			// "abc123 def456 gh"
 
-### eos / endOfstring
+### eos / endOfString
 Returns `true` if the scan pointer is at the end of the string being scanned,
 `false` otherwise.
 

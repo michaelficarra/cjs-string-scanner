@@ -1,6 +1,7 @@
 class StringScanner
 
 	constructor: (@str = '') ->
+		@str = '' + @str
 		@pos = 0
 		@lastMatch = {
 			reset: ->
@@ -27,7 +28,7 @@ class StringScanner
 		patternPos = @str.substr(@pos).search pattern
 		if patternPos < 0
 			@lastMatch.reset()
-			null
+			return null
 		matches = @str.substr(@pos+patternPos).match pattern
 		@lastMatch.captures = matches.slice 1
 		@lastMatch.str = @str.substr(@pos,patternPos) + matches[0]
@@ -35,7 +36,8 @@ class StringScanner
 	clone: ->
 		clone = new @constructor(@str)
 		clone.pos = @pos
-		clone.lastMatch = @lastMatch
+		clone.lastMatch = {}
+		clone.lastMatch[prop] = value for prop, value of @lastMatch
 		clone
 
 	concat: (str) ->
@@ -88,12 +90,12 @@ class StringScanner
 
 	scan: (pattern) ->
 		chk = @check pattern
-		this.pos += chk.length unless chk?
+		this.pos += chk.length if chk?
 		chk
 
 	scanUntil: (pattern) ->
 		chk = @checkUntil pattern
-		this.pos += chk.length unless chk?
+		this.pos += chk.length if chk?
 		chk
 
 	skip: (pattern) ->
