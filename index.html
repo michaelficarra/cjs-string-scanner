@@ -1,0 +1,422 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>StringScanner</title>
+  <meta name="description" content="string-tokenizing CommonJS module; mimicks Ruby's StringScanner API">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">StringScanner</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">string-tokenizing CommonJS module; mimicks Ruby's StringScanner API</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/michaelficarra/cjs-string-scanner/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/michaelficarra/cjs-string-scanner/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/michaelficarra/cjs-string-scanner" class="code">fork StringScanner on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <p>StringScanner performs lexical scanning operations on a string.
+Inspired by <a href="http://ruby-doc.org/core/classes/StringScanner.html">Ruby's StringScanner class</a></p>
+
+<h2>How To Use</h2>
+
+<p>Instantiate a new <code>StringScanner</code> by passing its constructor the string to scan.</p>
+
+<pre><code>var StringScanner = require("StringScanner");
+var ss = new StringScanner("abc123 def456");
+// #&lt;StringScanner 0/13 @ "abc12..."&gt;
+</code></pre>
+
+<p>For the following examples, <code>ss</code> represents the <code>StringScanner</code> instance
+defined above.</p>
+
+<h3>bol / beginningOfLine</h3>
+
+<p>Returns <code>true</code> if the scan pointer is at the beginning of a line (right after
+<code>\n</code>) or the beginning of the string, <code>false</code> otherwise.</p>
+
+<pre><code>ss.reset()    // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.pointer()  // 0
+ss.bol()      // true
+ss.scan(/./)  // "a"
+ss.pointer()  // 1
+ss.bol()      // false
+</code></pre>
+
+<h3>captures</h3>
+
+<p>Returns an Array containing the contents of the capturing groups in the last
+evaluated pattern match.</p>
+
+<pre><code>ss.reset()              // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.check(/.*(..) (..)/  // "abc123 de"
+ss.captures()           // ["23","de"]
+ss.check(/\w+/)         // "abc123"
+ss.captures()           // []
+ss.check(/\s+/)         // null
+ss.captures()           // []
+</code></pre>
+
+<h3>check(pattern)</h3>
+
+<p><em>Note: this method alters last match results</em></p>
+
+<p>Checks if a <code>scan</code> of the given pattern would succeed without advancing the
+scan pointer. Returns the portion of the string matched on successful match,
+<code>null</code> otherwise.</p>
+
+<pre><code>ss.reset()           // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.check(/[a-z]+/i)  // "abc"
+ss.check(/[a-z]+/i)  // "abc"
+ss.scan(/[a-z]+/i)   // "abc"
+ss.check(/[a-z]+/i)  // null
+ss.check(/[\d\s]+/)  // "123 "
+</code></pre>
+
+<h3>checkUntil(pattern)</h3>
+
+<p><em>Note: this method alters last match results</em></p>
+
+<p>Checks if a <code>scanUntil</code> would succeed without advancing the scan pointer.
+Returns the portion of the string being scanned from the scan pointer to the
+end of the matched string on successful match, <code>null</code> otherwise.</p>
+
+<pre><code>ss.reset()           // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.checkUntil(/\s/)  // "abc123 "
+ss.checkUntil(/\s/)  // "abc123 "
+ss.checkUntil(/r/)   // null
+ss.scanUntil(/e/)    // "abc123 de"
+ss.checkUntil(/\s/)  // null
+</code></pre>
+
+<h3>clone / dup</h3>
+
+<p>Creates a duplicate of this instance of <code>StringScanner</code>.</p>
+
+<h3>concat(str)</h3>
+
+<p>Appends the given string to the string being scanned.</p>
+
+<pre><code>ss.reset()            // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.checkUntil(/h/)    // null
+ss.concat(" ghi789")  // #&lt;StringScanner 0/20 @ "abc12..."
+ss.checkUntil(/h/)    // "abc123 def456 gh"
+</code></pre>
+
+<h3>eos / endOfString</h3>
+
+<p>Returns <code>true</code> if the scan pointer is at the end of the string being scanned,
+<code>false</code> otherwise.</p>
+
+<pre><code>ss.reset()     // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.pointer()   // 0
+ss.eos()       // false
+ss.scan(/.*/)  // "abc123 def456"
+ss.pointer()   // 13
+ss.eos()       // true
+</code></pre>
+
+<h3>exists(pattern) / exist(pattern)</h3>
+
+<p><em>Note: this method alters last match results</em></p>
+
+<p><em>Warning: this method may return <code>0</code> on a successful operation. Use <code>===</code>
+comparision to <code>null</code> for failure check, for example: <code>ss.exists(/a/i)===null</code></em></p>
+
+<p>Checks if the given pattern matches anywhere after the current scan pointer.
+This will determine if a <code>scanUntil</code> operation will succeed.  Returns the
+number of characters between the scan pointer and the position in which the
+match was found on success, <code>null</code> otherwise.</p>
+
+<pre><code>ss.reset()
+// ----
+ss.exists(/c/)   // 2
+ss.match()       // "c"
+ss.matched()     // true
+// ----
+ss.exists(/a/)   // 0
+ss.match()       // "a"
+ss.matched()     // true
+// ----
+ss.exists(/b*/)  // 0
+ss.match()       // ""
+ss.matched()     // true
+// ----
+ss.exists(/m/)   // null
+ss.match()       // null
+ss.matched()     // false
+</code></pre>
+
+<h3>getch / getChar</h3>
+
+<p><em>Note: this method alters last match results</em></p>
+
+<p><em>Note: Ruby equivalent: <code>get_byte</code></em></p>
+
+<p><code>scan</code>s one character and returns it; exactly equivalent to <code>scan(/./)</code>.</p>
+
+<pre><code>ss.reset()    // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.getch()    // "a"
+ss.reset()    // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scan(/./)  // "a"
+</code></pre>
+
+<h3>match</h3>
+
+<p><em>Note: Ruby equivalent: <code>matched</code></em></p>
+
+<p>Returns the last string matched or <code>null</code> if the last attempted match failed.</p>
+
+<pre><code>ss.reset()           // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scan(/[a-z]+/i)   // "abc"
+ss.match()           // "abc"
+ss.check(/[a-z]+/i)  // null
+ss.match()           // null
+</code></pre>
+
+<h3>matches(pattern)</h3>
+
+<p><em>Note: Ruby equivalent: <code>match?</code></em></p>
+
+<p>Checks if a scan of the given pattern would succeed without advancing the scan
+pointer. Returns the length of the string matched on successful match, <code>null</code>
+otherwise.</p>
+
+<pre><code>ss.reset()             // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.matches(/[a-z]+/i)  // 3
+ss.matches(/[a-z]+/i)  // 3
+ss.scan(/[a-z]+/i)     // "abc"
+ss.matches(/[a-z]+/i)  // null
+ss.matches(/[\d\s]+/)  // 4
+</code></pre>
+
+<h3>matched</h3>
+
+<p><em>Note: Ruby equivalent: <code>matched?</code></em></p>
+
+<p>Returns <code>true</code> if the last attempted match was successful, <code>false</code> otherwise.</p>
+
+<pre><code>ss.reset()      // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scan(/\w+/)  // "abc123"
+ss.matched()    // true
+ss.scan(/\w+/)  // null
+ss.matched()    // false
+</code></pre>
+
+<h3>matchSize</h3>
+
+<p><em>Warning: this method may return <code>0</code> on a successful operation. Use <code>===</code>
+comparision to <code>null</code> for failure check, for example: <code>ss.matchSize()===null</code></em></p>
+
+<p>Returns the length of the most recently matched string if the most recent match
+attempt succeeded, <code>null</code> otherwise.</p>
+
+<pre><code>ss.reset()       // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scan(/\w+/)   // "abc123"
+ss.matchSize()   // 6
+ss.check(/\w*/)  // ""
+ss.matchSize()   // 0
+ss.check(/\w+/)  // null
+ss.matchSize()   // null
+</code></pre>
+
+<h3>peek(len)</h3>
+
+<p>Returns <em>len</em> characters after the scan pointer, or the rest of the string,
+whichever is shorter.</p>
+
+<pre><code>ss.reset()      // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scan(/.*d/)  // "abc123 d"
+ss.peek(3)      // "ef4"
+ss.peek(9001)   // "ef456"
+ss.peek(0)      // ""
+ss.peek(-3)     // ""
+</code></pre>
+
+<h3>pointer / position</h3>
+
+<p>Returns the scan pointer position as an integer.</p>
+
+<pre><code>ss.reset()            // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.pointer()          // 0
+ss.scan(/\w+\d+\s+/)  // "abc123 "
+ss.pointer()          // 7
+ss.scan([a-z]+)       // "def"
+ss.pointer()          // 10
+</code></pre>
+
+<h3>setPointer(pos)</h3>
+
+<p>Manually move the scan pointer to <em>pos</em> characters from the beginning of the
+string. The scan pointer is bounded between zero and the scanning string's
+length. Returns the position to which the scan pointer was moved. <code>setPointer</code>
+neither resets nor modifies the last match results.</p>
+
+<pre><code>ss.reset()         // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.setPointer(4)   // 4
+ss.scan(/\d+/)     // "23"
+ss.pointer()       // 6
+ss.setPointer(-4)  // 0
+ss.setPointer(99)  // 13
+</code></pre>
+
+<h3>reset</h3>
+
+<p>Moves the scan pointer back to the beginning of the string being scanned and
+clears the last match results.</p>
+
+<pre><code>ss.reset()            // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scanUntil(/(\s)/)  // "abc123 "
+ss.pointer()          // 7
+ss.match()            // "abc123 "
+ss.captures()         // [" "]
+ss.reset()            // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.pointer()          // 0
+ss.match()            // null
+ss.captures()         // []
+</code></pre>
+
+<h3>rest</h3>
+
+<p>Returns the portion of the string being scanned after the scan pointer.</p>
+
+<pre><code>ss.reset()          // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scanUntil(/\s/)  // "abc123 "
+ss.rest()           // "def456"
+</code></pre>
+
+<h3>scan(pattern)</h3>
+
+<p><em>Note: this method alters last match results</em></p>
+
+<p>Attempts to match the given pattern at the position of the scan pointer.
+Returns the matched string and advances the string pointer upon successful
+match. A failed match will result in a <code>null</code> value being returned.</p>
+
+<pre><code>ss.reset()         // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scan(/[a-z]+/)  // "abc"
+ss                 // #&lt;StringScanner 3/13 @ "abc12..."&gt;
+ss.scan(/[a-z]+/)  // null
+ss                 // #&lt;StringScanner 3/13 @ "abc12..."&gt;
+ss.scan(/[0-9]+/)  // "123"
+ss                 // #&lt;StringScanner 6/13 @ "abc12..."&gt;
+</code></pre>
+
+<h3>scanUntil(pattern)</h3>
+
+<p><em>Note: this method alters last match results</em></p>
+
+<p>Attempts to match the pattern against the string being scanned. On a successful
+match, the scan pointer is advanced to the end of the matched portion of the
+string and the portion of the string being scanned up to and including the
+matched string is returned. On a failed match, <code>null</code> is returned.</p>
+
+<pre><code>ss.reset()         // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.scanUntil(/ /)  // "abc123 "
+ss.scanUntil(/f/)  // "def"
+ss.scanUntil(/f/)  // null
+</code></pre>
+
+<h3>skip(pattern)</h3>
+
+<p><em>Note: this method alters last match results</em></p>
+
+<p>Performs a <code>scan</code>, returning the length of the matched string on successful
+match, <code>null</code> otherwise.</p>
+
+<pre><code>ss.reset()         // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.skip(/[a-z]+/)  // 3
+ss.skip(/[a-z]+/)  // null
+ss.skip(/[0-9]+/)  // 3
+</code></pre>
+
+<h3>skipUntil(pattern)</h3>
+
+<p><em>Note: this method alters last match results</em></p>
+
+<p>Performs a <code>scanUntil</code>, returning the length of the matched string on
+successful match, <code>null</code> otherwise.</p>
+
+<pre><code>ss.reset()         // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.skipUntil(/ /)  // 7
+ss.skipUntil(/f/)  // 3
+ss.skipUntil(/f/)  // null
+</code></pre>
+
+<h3>string</h3>
+
+<p>Returns the entire string being scanned.</p>
+
+<pre><code>ss.string()  // "abc123 def456"
+ss.getch()   // "a"
+ss.string()  // "abc123 def456"
+</code></pre>
+
+<h3>terminate / clear</h3>
+
+<p>Advances the scan pointer to the end of the string being scanned and resets the
+last match results.</p>
+
+<pre><code>ss.reset()      // #&lt;StringScanner 0/13 @ "abc12..."&gt;
+ss.getch()      // "a"
+ss.pointer()    // 1
+ss.terminate()  // #&lt;StringScanner fin&gt;
+ss.pointer()    // 13
+ss.eos()        // true
+ss.match()      // null
+</code></pre>
+
+<h2>Known Issues</h2>
+
+<p>Not really an issue, but <code>StringScanner</code> assumes the global flag (g) is
+disabled on any RegExp objects passed as patterns to any of its methods. If the
+global flag is enabled, <code>StringScanner</code> may produce unexpected results.</p>
+
+<h2>Additional Info</h2>
+
+<p>I am always open for feature requests or any feedback.  I can be reached at
+<a href="http://github.com/michaelficarra">Github</a>.</p>
+
+<p>Thanks to the Ruby community for the original idea and implementation.</p>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/michaelficarra" class="avatar"><img src="https://secure.gravatar.com/avatar/24fb0088507077f7852adaec4f6b679f?s=30&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" height="48"/></a> <a href="https://github.com/michaelficarra">michaelficarra</a> maintains <a href="https://github.com/michaelficarra/cjs-string-scanner">StringScanner</a></p>
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br/>theme by <a href="http://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/michaelficarra/cjs-string-scanner/tarball/master" class="tar">tar</a><a href="https://github.com/michaelficarra/cjs-string-scanner/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>
