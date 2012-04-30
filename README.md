@@ -2,7 +2,7 @@ StringScanner
 =============
 
 StringScanner performs lexical scanning operations on a string.
-Inspired by [Ruby's StringScanner class](http://ruby-doc.org/core/classes/StringScanner.html)
+Inspired by [Ruby's StringScanner class](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/strscan/rdoc/StringScanner.html)
 
 
 How To Use
