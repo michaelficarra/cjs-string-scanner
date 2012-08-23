@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/michaelficarra/cjs-string-scanner.png)](http://travis-ci.org/michaelficarra/cjs-string-scanner)
 StringScanner
 =============
 
