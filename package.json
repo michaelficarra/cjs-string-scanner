@@ -1,7 +1,7 @@
 { "name"       : "StringScanner"
 , "description": "StringScanner performs lexical scanning operations on a string."
 , "author"     : "Michael Ficarra"
-, "version"    : "0.0.2"
+, "version"    : "0.0.3"
 , "homepage"   : "http://github.com/michaelficarra/cjs-string-scanner"
 , "main"       : "./lib/StringScanner"
 , "directories":
@@ -16,7 +16,7 @@
     , "url" : "http://github.com/michaelficarra/cjs-string-scanner/raw/master/LICENSE"
     }
   ]
-, "engines": { "node": ">=0.2.5" }
+, "engines": { "node": ">=0.6" }
 , "keywords":
   [ "StringScanner"
   , "string"
